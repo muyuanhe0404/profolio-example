@@ -44,6 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeContactForm();
     initializeAnimations();
     initializePhotoGallery();
+    fetchYouTubeTitle();
 });
 
 // 导航功能初始化
@@ -593,4 +594,33 @@ function changePhotoSlide() {
     }
     
     console.log('Changed to slide', currentSlideIndex); // 调试信息
+}
+
+// 获取YouTube视频标题
+async function fetchYouTubeTitle() {
+    const videoId = 'y4wZw7rsjjw'; // YouTube视频ID
+    
+    try {
+        // 使用YouTube oEmbed API获取视频信息
+        const response = await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`);
+        const data = await response.json();
+        
+        if (data && data.title) {
+            // 更新所有视频卡片的标题
+            const videoTitles = document.querySelectorAll('.video-info h4');
+            videoTitles.forEach(titleElement => {
+                titleElement.textContent = data.title;
+            });
+            
+            console.log('YouTube title updated:', data.title);
+        }
+    } catch (error) {
+        console.log('Failed to fetch YouTube title, using fallback');
+        
+        // 如果API调用失败，使用备用标题
+        const videoTitles = document.querySelectorAll('.video-info h4');
+        videoTitles.forEach(titleElement => {
+            titleElement.textContent = 'Piano Performance Video';
+        });
+    }
 }
