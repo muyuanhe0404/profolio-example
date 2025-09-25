@@ -1,0 +1,31 @@
+{
+  "name": "musician-portfolio",
+  "version": "1.0.0",
+  "description": "A modern, responsive musician portfolio website",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "serve": "npx serve .",
+    "dev": "npx live-server ."
+  },
+  "keywords": [
+    "portfolio",
+    "musician",
+    "website",
+    "html",
+    "css",
+    "javascript",
+    "responsive"
+  ],
+  "author": "Sirui Wang",
+  "license": "MIT",
+  "devDependencies": {
+    "live-server": "^1.2.2",
+    "serve": "^14.2.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/username/musician-portfolio.git"
+  },
+  "homepage": "https://username.github.io/musician-portfolio"
+}
