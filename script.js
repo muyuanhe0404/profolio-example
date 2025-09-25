@@ -41,6 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeScrollEffects();
     initializeWorkFilters();
     initializeMusicPlayer();
+    initializeEmailJS();
     initializeContactForm();
     initializeAnimations();
     initializePhotoGallery();
@@ -302,6 +303,12 @@ function formatTime(time) {
     return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
 }
 
+// 初始化EmailJS
+function initializeEmailJS() {
+    // 初始化EmailJS (使用公共密钥)
+    emailjs.init("YOUR_PUBLIC_KEY"); // 需要替换为实际的公共密钥
+}
+
 // 联系表单初始化
 function initializeContactForm() {
     if (!contactForm) {
@@ -309,7 +316,7 @@ function initializeContactForm() {
         return;
     }
     
-    contactForm.addEventListener('submit', (e) => {
+    contactForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
         const formData = new FormData(contactForm);
@@ -329,9 +336,49 @@ function initializeContactForm() {
             return;
         }
         
-        // 模拟发送
-        showNotification('Message sent successfully! We will get back to you soon.', 'success');
-        contactForm.reset();
+        // 显示发送中状态
+        const submitBtn = contactForm.querySelector('.submit-btn');
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = 'Sending...';
+        submitBtn.disabled = true;
+        
+        try {
+            // 使用EmailJS发送邮件
+            const templateParams = {
+                from_name: name,
+                from_email: email,
+                subject: subject,
+                message: message,
+                to_email: 'siruiw67@gmail.com' // 接收邮件的地址
+            };
+            
+            // 发送邮件 (需要配置Service ID和Template ID)
+            const response = await emailjs.send(
+                'YOUR_SERVICE_ID',    // 需要替换为实际的服务ID
+                'YOUR_TEMPLATE_ID',   // 需要替换为实际的模板ID
+                templateParams
+            );
+            
+            console.log('Email sent successfully:', response);
+            showNotification('Message sent successfully! We will get back to you soon.', 'success');
+            contactForm.reset();
+            
+        } catch (error) {
+            console.error('Email sending failed:', error);
+            
+            // 如果EmailJS失败，提供备用方案 - mailto链接
+            const mailtoLink = `mailto:siruiw67@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(
+                `From: ${name} (${email})\n\n${message}`
+            )}`;
+            
+            showNotification('Opening your email client to send the message...', 'info');
+            window.open(mailtoLink);
+            contactForm.reset();
+        } finally {
+            // 恢复按钮状态
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+        }
     });
 }
 
@@ -549,6 +596,16 @@ function initializePhotoGallery() {
                 resetAutoSlide(); // 重新开始计时
                 console.log('Manual slide change triggered by click - timer reset');
             });
+            
+            // 初始化第一张图片的容器尺寸
+            const firstImg = photoSlides[0]?.querySelector('img');
+            if (firstImg) {
+                if (firstImg.complete) {
+                    adjustContainerSize(firstImg, slideshowContainer);
+                } else {
+                    firstImg.onload = () => adjustContainerSize(firstImg, slideshowContainer);
+                }
+            }
         }
         
         // 立即执行一次切换，确保功能正常
@@ -591,36 +648,68 @@ function changePhotoSlide() {
     // 添加新的活跃状态
     if (photoSlides[currentSlideIndex]) {
         photoSlides[currentSlideIndex].classList.add('active');
+        
+        // 动态调整容器尺寸
+        const activeImg = photoSlides[currentSlideIndex].querySelector('img');
+        const container = document.querySelector('.slideshow-container');
+        
+        if (activeImg && container) {
+            // 等待图片加载完成后调整容器尺寸
+            if (activeImg.complete) {
+                adjustContainerSize(activeImg, container);
+            } else {
+                activeImg.onload = () => adjustContainerSize(activeImg, container);
+            }
+        }
     }
     
     console.log('Changed to slide', currentSlideIndex); // 调试信息
 }
 
+function adjustContainerSize(img, container) {
+    // 设置容器尺寸为图片的自然尺寸（但不超过最大宽度）
+    const maxWidth = Math.min(img.naturalWidth, 500); // 最大宽度500px
+    const aspectRatio = img.naturalHeight / img.naturalWidth;
+    const height = maxWidth * aspectRatio;
+    
+    container.style.width = maxWidth + 'px';
+    container.style.height = height + 'px';
+}
+
 // 获取YouTube视频标题
 async function fetchYouTubeTitle() {
-    const videoId = 'y4wZw7rsjjw'; // YouTube视频ID
+    // 所有视频的ID数组
+    const videoIds = [
+        'y4wZw7rsjjw',  // 第1个视频
+        '5qV_UcvyZmU',  // 第2个视频
+        'Vlh8_vNmNQw',  // 第3个视频
+        'PhM9uuDyMOI',  // 第4个视频
+        'EGTLbJZlAws',  // 第5个视频
+        'FZtKu7IVd3M'   // 第6个视频
+    ];
     
-    try {
-        // 使用YouTube oEmbed API获取视频信息
-        const response = await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`);
-        const data = await response.json();
+    // 视频ID对应的索引 (第1,2,3,4,5,6个视频分别对应的videoIds索引)
+    const videoMapping = [0, 1, 2, 3, 4, 5]; // 每个视频都有独特的ID
+    
+    const videoTitles = document.querySelectorAll('.video-info h4');
+    
+    // 为每个视频获取标题
+    for (let i = 0; i < videoTitles.length; i++) {
+        const videoIdIndex = videoMapping[i];
+        const videoId = videoIds[videoIdIndex];
         
-        if (data && data.title) {
-            // 更新所有视频卡片的标题
-            const videoTitles = document.querySelectorAll('.video-info h4');
-            videoTitles.forEach(titleElement => {
-                titleElement.textContent = data.title;
-            });
+        try {
+            // 使用YouTube oEmbed API获取视频信息
+            const response = await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`);
+            const data = await response.json();
             
-            console.log('YouTube title updated:', data.title);
+            if (data && data.title) {
+                videoTitles[i].textContent = data.title;
+                console.log(`Video ${i+1} title updated:`, data.title);
+            }
+        } catch (error) {
+            console.log(`Failed to fetch title for video ${i+1}, using fallback`);
+            videoTitles[i].textContent = 'Piano Performance Video';
         }
-    } catch (error) {
-        console.log('Failed to fetch YouTube title, using fallback');
-        
-        // 如果API调用失败，使用备用标题
-        const videoTitles = document.querySelectorAll('.video-info h4');
-        videoTitles.forEach(titleElement => {
-            titleElement.textContent = 'Piano Performance Video';
-        });
     }
 }
