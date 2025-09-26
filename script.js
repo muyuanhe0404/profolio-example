@@ -684,8 +684,8 @@ async function fetchYouTubeTitle() {
         '5qV_UcvyZmU',  // 第2个视频
         'Vlh8_vNmNQw',  // 第3个视频
         'PhM9uuDyMOI',  // 第4个视频
-        'EGTLbJZlAws',  // 第5个视频
-        'FZtKu7IVd3M'   // 第6个视频
+        'FZtKu7IVd3M',  // 第5个视频 (调换后)
+        'enBvWBz7K9Y'   // 第6个视频 (调换后)
     ];
     
     // 视频ID对应的索引 (第1,2,3,4,5,6个视频分别对应的videoIds索引)
