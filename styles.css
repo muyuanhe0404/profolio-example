@@ -18,7 +18,7 @@
     --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     --font-primary: 'Playfair Display', serif;
     --font-secondary: 'Inter', sans-serif;
-    --font-elegant: 'Crimson Text', 'Libre Baskerville', 'Times New Roman', serif;
+    --font-elegant: 'Crimson Text', 'Libre Baskerville', 'Times New Roman', 'Georgia', serif;
 }
 
 body {
