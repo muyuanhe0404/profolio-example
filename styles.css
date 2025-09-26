@@ -18,6 +18,7 @@
     --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     --font-primary: 'Playfair Display', serif;
     --font-secondary: 'Inter', sans-serif;
+    --font-elegant: 'Crimson Text', 'Libre Baskerville', 'Times New Roman', serif;
 }
 
 body {
@@ -122,8 +123,8 @@ body {
     display: flex;
     align-items: center;
     padding: 100px 20px 50px;
-    background: var(--gradient);
-    color: white;
+    background: var(--bg-color);
+    color: var(--text-color);
     position: relative;
     overflow: hidden;
 }
@@ -209,13 +210,13 @@ body {
 
 .cta-button:hover {
     background: white;
-    color: var(--primary-color);
+    color: #1a1a1a;
     transform: translateY(-2px);
 }
 
 .hero-image {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     opacity: 0;
     animation: fadeInRight 1s ease 1s forwards;
@@ -314,11 +315,14 @@ section {
 }
 
 .about-description {
-    font-size: 1.1rem;
-    line-height: 1.7;
-    margin-bottom: 1.2rem;
-    color: var(--light-text);
+    font-family: var(--font-elegant);
+    font-size: 1.15rem;
+    font-weight: 400;
+    line-height: 1.75;
+    margin-bottom: 1.3rem;
+    color: var(--text-color);
     text-align: justify;
+    letter-spacing: 0.2px;
 }
 
 .about-description:last-child {
@@ -733,7 +737,8 @@ section {
     align-items: center;
     padding: 2rem;
     border-bottom: 1px solid var(--border-color);
-    transition: background 0.3s ease;
+    transition: all 0.3s ease;
+    cursor: pointer;
 }
 
 .event-item:last-child {
@@ -742,6 +747,8 @@ section {
 
 .event-item:hover {
     background: var(--light-bg);
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
 }
 
 .event-date {
